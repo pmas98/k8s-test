@@ -27,7 +27,7 @@ jobs:
 
     - name: Build and push Docker image to GCR
       run: |
-        IMAGE_URL=gcr.io/$GCP_PROJECT_ID/your-image-name:$GITHUB_SHA
+        IMAGE_URL=gcr.io/$GCP_PROJECT_ID/mynodeapp:$GITHUB_SHA
         docker build -t $IMAGE_URL .
         docker push $IMAGE_URL
         echo "Docker image URL: $IMAGE_URL"
