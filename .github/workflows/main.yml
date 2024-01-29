@@ -39,7 +39,8 @@ jobs:
           --region=us-central1 \
           --num-nodes=1 \
           --machine-type=e2-micro
-    
+          --local-ssd-count=1
+          
         gcloud container clusters get-credentials k8s-testing --region=us-central1
     
         # Get the Docker image URL from the file
