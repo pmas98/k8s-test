@@ -35,12 +35,14 @@ jobs:
   
     - name: Install gke-gcloud-auth-plugin
       run: |
-        PLUGIN_PATH=/usr/local/bin/gke-gcloud-auth-plugin
-        curl -L -o $PLUGIN_PATH https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl-credential-gke
-        chmod +x $PLUGIN_PATH
-        export PATH=$PATH:/usr/local/bin  # Ensure the directory is in the PATH
-        echo "Installed gke-gcloud-auth-plugin to $PLUGIN_PATH"
-    
+        gcloud components list
+        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+        sudo apt update
+        sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
+        echo "##vso[task.setvariable variable=USE_GKE_GCLOUD_AUTH_PLUGIN]True"
+        gcloud components list
+
     - name: Deploy to GKE
       run: |
         gcloud container clusters get-credentials autopilot-cluster-1 --region=us-central1
