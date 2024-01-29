@@ -35,9 +35,11 @@ jobs:
   
     - name: Install gke-gcloud-auth-plugin
       run: |
-        curl -L -o gke-gcloud-auth-plugin https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl-credential-gke && \
-        chmod +x gke-gcloud-auth-plugin && \
-        sudo mv gke-gcloud-auth-plugin /usr/local/bin/
+        PLUGIN_PATH=/usr/local/bin/gke-gcloud-auth-plugin
+        curl -L -o $PLUGIN_PATH https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl-credential-gke
+        chmod +x $PLUGIN_PATH
+        export PATH=$PATH:/usr/local/bin  # Ensure the directory is in the PATH
+        echo "Installed gke-gcloud-auth-plugin to $PLUGIN_PATH"
     
     - name: Deploy to GKE
       run: |
