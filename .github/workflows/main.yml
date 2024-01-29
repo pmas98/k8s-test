@@ -14,12 +14,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
     
-    - name: Install gke-gcloud-auth-plugin
-      run: |
-        curl -L -o gke-gcloud-auth-plugin https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl-credential-gke && \
-        chmod +x gke-gcloud-auth-plugin && \
-        sudo mv gke-gcloud-auth-plugin /usr/local/bin/
-    
     - name: Authenticate with Google Cloud
       run: |
         echo "$GCP_SERVICE_KEY" > /tmp/gcp_key.json &&
@@ -38,6 +32,10 @@ jobs:
         docker push $IMAGE_URL
         echo "Docker image URL: $IMAGE_URL"
         echo "Docker image URL: $IMAGE_URL" >> image_url.txt
+  
+    - name: Install gke-gcloud-auth-plugin
+      run: |
+        sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
 
     - name: Deploy to GKE
       run: |
