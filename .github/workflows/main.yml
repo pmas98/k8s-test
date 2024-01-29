@@ -34,17 +34,22 @@ jobs:
 
     - name: Deploy to GKE
       run: |
-        gcloud container clusters create k8s-testing --region=us-central1
+        # Create GKE cluster with minimum vCPUs and SSD_TOTAL_GB
+        gcloud container clusters create k8s-testing \
+          --region=us-central1 \
+          --num-nodes=1 \
+          --machine-type=e2-micro
+    
         gcloud container clusters get-credentials k8s-testing --region=us-central1
-
+    
         # Get the Docker image URL from the file
         IMAGE_URL=$(cat image_url.txt)
-
+    
         # Replace the image URL in the deployment file
         sed -i "s|us-central1-docker.pkg.dev/capable-memory-409516/hello-repo/hello-app:v2|$IMAGE_URL|" deployment.yaml
-
+    
         kubectl apply -f deployment.yaml
-
+      
     env:
       GCP_SERVICE_KEY: ${{ secrets.GCP_SERVICE_KEY }}
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
