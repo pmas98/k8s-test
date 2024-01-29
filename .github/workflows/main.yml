@@ -10,9 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
@@ -30,14 +27,24 @@ jobs:
 
     - name: Build and push Docker image to GCR
       run: |
-        docker build -t gcr.io/$GCP_PROJECT_ID/your-image-name:$GITHUB_SHA .
-        docker push gcr.io/$GCP_PROJECT_ID/your-image-name:$GITHUB_SHA
-
-      env:
-        GCP_SERVICE_KEY: ${{ secrets.GCP_SERVICE_KEY }}
-        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        IMAGE_URL=gcr.io/$GCP_PROJECT_ID/your-image-name:$GITHUB_SHA
+        docker build -t $IMAGE_URL .
+        docker push $IMAGE_URL
+        echo "Docker image URL: $IMAGE_URL" >> image_url.txt
 
     - name: Deploy to GKE
       run: |
-        gcloud container clusters get-credentials k8s-testing --region us-central1
-        kubectl apply -f your-deployment-file.yaml
+        gcloud container clusters create k8s-testing --region=us-central1
+        gcloud container clusters get-credentials k8s-testing --region=us-central1
+
+        # Get the Docker image URL from the file
+        IMAGE_URL=$(cat image_url.txt)
+
+        # Replace the image URL in the deployment file
+        sed -i "s|us-central1-docker.pkg.dev/capable-memory-409516/hello-repo/hello-app:v2|$IMAGE_URL|" deployment.yaml
+
+        kubectl apply -f deployment.yaml
+
+    env:
+      GCP_SERVICE_KEY: ${{ secrets.GCP_SERVICE_KEY }}
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
