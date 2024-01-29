@@ -40,7 +40,7 @@ jobs:
         IMAGE_URL=$(cat image_url.txt)
     
         # Replace the image URL in the deployment file
-        sed -i "s|us-central1-docker.pkg.dev/capable-memory-409516/hello-repo/hello-app:v2|$IMAGE_URL|" deployment.yaml
+        sed -i "s#us-central1-docker.pkg.dev/capable-memory-409516/hello-repo/hello-app:v2#$IMAGE_URL#" deployment.yaml
     
         kubectl apply -f deployment.yaml
       
