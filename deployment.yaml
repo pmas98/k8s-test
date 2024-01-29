@@ -19,6 +19,6 @@ spec:
     spec:
       containers:
       - name: my-node-app
-        image: us-central1-docker.pkg.dev/capable-memory-409516/hello-repo/hello-app:v2
+        image: gcr.io/capable-memory-409516/mynodeapp@sha256:0892a523d38f67fb67cef0427dfb695c0aff00b317313fc369966abeee447efa
         ports:
-        - containerPort: 80
+        - containerPort: 3000
